@@ -34,7 +34,7 @@ RUN apk upgrade --no-cache \
     busybox-suid \
     && ln -sf /usr/bin/msmtp /usr/sbin/sendmail \
     && rm -rf /var/cache/apk/*
-COPY --from=builder /usr/lib/python3.7/site-packages /usr/lib/python3.7/
+COPY --from=builder /usr/lib/python3.8/site-packages /usr/lib/python3.8/
 COPY --from=builder /usr/bin/borg /usr/bin/
 COPY --from=builder /usr/bin/borgfs /usr/bin/
 COPY --from=builder /usr/bin/borgmatic /usr/bin/
