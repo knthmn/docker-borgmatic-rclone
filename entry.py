@@ -61,12 +61,10 @@ if healthcheck:
 script = open('/create.sh', 'w+')
 script.write('\n'.join([
     'echo Starting backup as $(id)',
-    f'wget {check_url}/start -O /dev/null' if healthcheck else '',
-    'borgmatic --create --prune --stats -v 1',
-    f'e1=$?; if [ $e1 -ne 0 ]; then wget {check_url}/fail -O /dev/null; fi' if healthcheck else '',
-    f'rclone sync /mnt/repo {rclone_destination} --config /rclone_config/rclone.conf -v {rclone_args}',
-    f'e2=$?; if [ $e2 -ne 0 ]; then wget {check_url}/fail -O /dev/null; fi' if healthcheck else '',
-    f'if [ $e1 -eq 0 ] && [ $e2 -eq 0 ]; then wget {check_url} -O /dev/null; fi' if healthcheck else '',
+    f'wget {check_url}/start -O /dev/null' if healthcheck else 'true',
+    'borgmatic --create --prune --stats -v 1 && \\',
+    f'rclone sync /mnt/repo {rclone_destination} --config /rclone_config/rclone.conf -v {rclone_args} && \\',
+    f'wget {check_url} -O /dev/null || wget {check_url}/fail -O /dev/null' if healthcheck else 'true',
     'echo Finished backup'
 ]))
 script.close()
@@ -81,10 +79,10 @@ if healthcheck:
 script = open('/check.sh', 'w+')
 script.write('\n'.join([
     'echo Starting integrity check',
-    f'wget {check_url}/start -O /dev/null' if healthcheck else '',
-    'borg check /mnt/repo',
-    f'e1=$?; if [ $e1 -ne 0 ]; then wget {check_url}/fail -O /dev/null; fi' if healthcheck else '',
-    f'if [ $e1 -eq 0 ]; then wget {check_url} -O /dev/null; fi'
+    f'wget {check_url}/start -O /dev/null' if healthcheck else 'true',
+    'borg check /mnt/repo && \\',
+    f'wget {check_url} -O /dev/null || wget {check_url}/fail -O /dev/null' if healthcheck else 'true',
+    'echo Finished integrity check'
 ]))
 script.close()
 print("/check.sh content:")
