@@ -45,7 +45,6 @@ else:
     group = 'root'
 run_result = run(f'su {user} -c \'id\'')
 print(f'User is {run_result}')
-print()
 
 # Setup script for creating and uploading archives
 if ('DESTINATION' not in env):
@@ -59,14 +58,14 @@ if healthcheck:
 script = open('/create.sh', 'w+')
 script.write('\n'.join([
     'echo Starting backup as $(id)',
-    f'wget {check_url}/start -O /dev/null' if healthcheck else 'true',
+    f'wget -q {check_url}/start -O /dev/null' if healthcheck else 'true',
     'borgmatic -c /mnt/borgmatic --create --prune --stats -v 1 && \\',
-    f'rclone sync /mnt/repo {rclone_destination} --config /mnt/rclone_config/rclone.conf -v {rclone_args} && \\',
-    f'wget {check_url} -O /dev/null || wget {check_url}/fail -O /dev/null' if healthcheck else 'true',
+    f'rclone sync /mnt/repo {rclone_destination} --config /mnt/rclone_config/rclone.conf {rclone_args} && \\',
+    f'wget -q {check_url} -O /dev/null || wget -q {check_url}/fail -O /dev/null' if healthcheck else 'true',
     'echo Finished backup'
 ]))
 script.close()
-print("/create.sh content:")
+print("--- create.sh content ---")
 print(open('/create.sh', 'r').read())
 print()
 
@@ -77,13 +76,13 @@ if healthcheck:
 script = open('/check.sh', 'w+')
 script.write('\n'.join([
     'echo Starting integrity check',
-    f'wget {check_url}/start -O /dev/null' if healthcheck else 'true',
+    f'wget -q {check_url}/start -O /dev/null' if healthcheck else 'true',
     'borg check /mnt/repo && \\',
-    f'wget {check_url} -O /dev/null || wget {check_url}/fail -O /dev/null' if healthcheck else 'true',
+    f'wget -q {check_url} -O /dev/null || wget -q {check_url}/fail -O /dev/null' if healthcheck else 'true',
     'echo Finished integrity check'
 ]))
 script.close()
-print("/check.sh content:")
+print("--- check.sh content ---")
 print(open('/check.sh', 'r').read())
 print()
 
@@ -99,17 +98,17 @@ if 'CRON_CHECK'in env:
     crontab.write(
         f"{cron_check} /usr/bin/flock lock -c \"su {user} -c '/bin/sh /check.sh'\"\n")
 crontab.close()
-print("crontab.txt content:")
+print("--- crontab.txt content ---")
 print(open(crontab_file, 'r').read())
-print()
 
 # Run create archive script once if requested
 run_once = 'AT_START' in env and int(env['AT_START'])
 if (run_once):
-    print("AT_START set to 1, running once")
+    print("AT_START set to 1, now running create task once")
     os.system(f"su {user} -c '/bin/sh /create.sh'")
+    print()
 
 # Start cron
-print("Starting schedule")
+print("Starting cron schedule")
 run('/usr/bin/crontab /crontab.txt')
 os.system('/usr/sbin/crond -f')

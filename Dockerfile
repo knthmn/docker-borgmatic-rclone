@@ -47,4 +47,4 @@ ENV BORG_CACHE_DIR=/mnt/borg_cache
 ENV BORG_CONFIG_DIR=/mnt/borg_config
 VOLUME [ "/mnt/source", "/mnt/repo", "/mnt/rclone_config", "/mnt/borgmatic", "/mnt/borg_cache", "/mnt/borg_config" ]
 
-ENTRYPOINT ["/usr/bin/python3", "/entry.py"]
+ENTRYPOINT ["/usr/bin/python3", "-u", "/entry.py"]
