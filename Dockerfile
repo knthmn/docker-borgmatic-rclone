@@ -30,10 +30,16 @@ RUN apk upgrade --no-cache \
     libacl \
     msmtp \
     postgresql-client \
-    rclone \
     busybox-suid \
     && ln -sf /usr/bin/msmtp /usr/sbin/sendmail \
     && rm -rf /var/cache/apk/*
+RUN cd /tmp && \
+    wget -q https://downloads.rclone.org/rclone-current-linux-amd64.zip && \
+    unzip -q rclone*.zip && \
+    cd rclone-*-linux-amd64 && \
+    cp rclone /usr/bin && \
+    chmod 755 /usr/bin/rclone && \
+    rm -r /tmp/rclone*
 COPY --from=builder /usr/lib/python3.8/site-packages /usr/lib/python3.8/
 COPY --from=builder /usr/bin/borg /usr/bin/
 COPY --from=builder /usr/bin/borgfs /usr/bin/
