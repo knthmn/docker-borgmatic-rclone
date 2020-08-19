@@ -51,7 +51,7 @@ if ('DESTINATION' not in env):
     print('DESTINATION not set')
     exit(1)
 rclone_destination = env['DESTINATION']
-rclone_args = env['RCLONE_ARGS']
+rclone_args = env.get('RCLONE_ARGS', '--fast-list --delete-after --delete-excluded')
 healthcheck = 'CHECKURL_CREATE' in env
 if healthcheck:
     check_url = env['CHECKURL_CREATE']
