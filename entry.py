@@ -44,8 +44,6 @@ else:
     user = 'root'
     group = 'root'
 run_result = run(f'su {user} -c \'id\'')
-run(f'mkdir -p /home/{user}/.cache')
-run(f'ln -s /borg_cache /home/{user}/.cache/borg')
 print(f'User is {run_result}')
 print()
 
