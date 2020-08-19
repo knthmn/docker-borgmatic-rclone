@@ -43,6 +43,8 @@ COPY --from=builder /usr/bin/upgrade-borgmatic-config /usr/bin/
 COPY entry.py /entry.py
 
 ENV RCLONE_ARGS="--fast-list --delete-after --delete-excluded"
-VOLUME [ "/mnt/source", "/mnt/repo", "/etc/borgmatic.d", "/rclone_config", "/borg_cache" ]
+ENV BORG_CACHE_DIR=/mnt/borg_cache
+ENV BORG_CONFIG_DIR=/mnt/borg_config
+VOLUME [ "/mnt/source", "/mnt/repo", "/mnt/rclone_config", "/mnt/borgmatic", "/mnt/borg_cache", "/mnt/borg_config" ]
 
 ENTRYPOINT ["/usr/bin/python3", "/entry.py"]

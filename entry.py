@@ -62,8 +62,8 @@ script = open('/create.sh', 'w+')
 script.write('\n'.join([
     'echo Starting backup as $(id)',
     f'wget {check_url}/start -O /dev/null' if healthcheck else 'true',
-    'borgmatic --create --prune --stats -v 1 && \\',
-    f'rclone sync /mnt/repo {rclone_destination} --config /rclone_config/rclone.conf -v {rclone_args} && \\',
+    'borgmatic -c /mnt/borgmatic --create --prune --stats -v 1 && \\',
+    f'rclone sync /mnt/repo {rclone_destination} --config /mnt/rclone_config/rclone.conf -v {rclone_args} && \\',
     f'wget {check_url} -O /dev/null || wget {check_url}/fail -O /dev/null' if healthcheck else 'true',
     'echo Finished backup'
 ]))
