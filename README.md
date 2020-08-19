@@ -42,7 +42,7 @@ The container will run the following two cron tasks. Both tasks share a mutex lo
 The container also has the following features
 * A different user for the borg repo can be set using `GID` and `UID`. By default `root:root` is used.
 * healthchecks.io can be used to monitor the jobs by setting `CHECKURL_CREATE` and `CHECKURL_CHECK`. 
-* The create task can be run at the start of the container by setting `FORCE_SYNC=1`.
+* The create task can be run at the start of the container by setting `AT_START=1`.
 * Arguments for rclone can be changed by `RCLONE_ARGS`, default is `--fast-list --delete-after --delete-excluded`
 
 ## Notes

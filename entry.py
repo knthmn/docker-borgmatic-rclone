@@ -106,9 +106,9 @@ print(open(crontab_file, 'r').read())
 print()
 
 # Run create archive script once if requested
-run_once = bool(int(env['RUN_ONCE']))
+run_once = 'AT_START' in env and int(env['AT_START'])
 if (run_once):
-    print("RUN_ONCE set to 1, running once")
+    print("AT_START set to 1, running once")
     os.system(f"su {user} -c '/bin/sh /create.sh'")
 
 # Start cron
