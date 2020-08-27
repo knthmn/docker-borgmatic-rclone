@@ -48,6 +48,7 @@ COPY --from=builder /usr/bin/borgmatic /usr/bin/
 COPY --from=builder /usr/bin/generate-borgmatic-config /usr/bin/
 COPY --from=builder /usr/bin/upgrade-borgmatic-config /usr/bin/
 COPY entry.py /entry.py
+COPY script.py /script.py
 
 ENV BORG_CACHE_DIR=/mnt/borg_cache
 ENV BORG_CONFIG_DIR=/mnt/borg_config
