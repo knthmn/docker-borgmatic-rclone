@@ -20,10 +20,10 @@ try:
     if task == 'create':
         rclone_destination = os.environ['DESTINATION']
         rclone_args = os.environ.get('RCLONE_ARGS', '--fast-list --delete-after --delete-excluded')
-        subprocess.run('borgmatic -c /mnt/borgmatic --create --prune --stats -v 1', shell=True, check=True)
+        subprocess.run('borgmatic -c /mnt/borgmatic create prune --stats -v 1', shell=True, check=True)
         subprocess.run(f'rclone sync /mnt/repo {rclone_destination} --config /mnt/rclone_config/rclone.conf {rclone_args}', shell=True, check=True)
     elif task == 'check':
-        subprocess.run('borg check /mnt/repo', shell=True, check=True)
+        subprocess.run('borgmatic -c /mnt/borgmatic check -v 1', shell=True, check=True)
     ping()
 except subprocess.CalledProcessError as e:
     ping('/fail')

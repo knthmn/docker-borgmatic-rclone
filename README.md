@@ -35,8 +35,8 @@ Volumes:
 * `/mnt/borg_config`: borg config
 
 The container will run the following two cron tasks. Both tasks share a mutex lock so there is at most one task running.
-* create and prune: schedule specified by `CRON_CREATE`, which runs `borgmatic --create --prune` for all the borgmatic configurations, and upload the repo to `DESTINATION` by using `rclone`. 
-* check: schedule specified by `CRON_CHECK`, which runs `borg check` on the repo.
+* create and prune: schedule specified by `CRON_CREATE`, which runs `borgmatic create prune` for all the borgmatic configurations, and upload the repo to `DESTINATION` by using `rclone`. 
+* check: schedule specified by `CRON_CHECK`, which runs `borgmatic check` on the repo.
 
 
 The container also has the following features
