@@ -67,7 +67,6 @@ run_once = 'AT_START' in env and int(env['AT_START'])
 if (run_once):
     print("AT_START set to 1, now running create task once")
     os.system(f'su {user} -c \'/usr/bin/python3 /script.py create\'')
-    print()
 
 # Start cron
 print("Starting cron schedule")
