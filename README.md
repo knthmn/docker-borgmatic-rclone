@@ -38,8 +38,8 @@ Volumes:
 * `/mnt/borg_config`: directory for borg config
 
 The container will run the following two cron tasks. Both tasks share a mutex lock so there is at most one task running.
-* create and prune: schedule specified by `CRON_CREATE`, which runs `borgmatic create prune` for all the borgmatic configurations, and upload the repo to `DESTINATION` by using `rclone`. 
-* check: schedule specified by `CRON_CHECK`, which runs `borgmatic check` on the repo.
+* create: schedule specified by `CRON_CREATE`, which runs `borgmatic` on the borgmatic configurations, and upload the repo to `DESTINATION` by using `rclone`.
+* check: schedule specified by `CRON_CHECK`, which runs `borg check {CHECK_OPTS}` on the repo. This task can be used to run a more time consuming check task and can be disabled by not specifying `CRON_CHECK`
 
 
 The image also has the following features
@@ -47,6 +47,7 @@ The image also has the following features
 * healthchecks.io can be used to monitor the jobs by setting `CHECKURL_CREATE` and `CHECKURL_CHECK`. 
 * The create task can be run at the start of the container by setting `AT_START=1`.
 * Arguments for rclone can be changed by `RCLONE_ARGS`, default is `--fast-list --delete-after --delete-excluded`
+* Arguments for the check task can be changed by `CHECK_OPTS`, default is empty.
 
 ## Notes
 I created this container because it suits my workflow for creating backups. I was originally using both `pfidr34/docker-rclone` and `b3vis/docker-borgmatic`. It bugged me that `b3vis/docker-borgmatic` didn't have the feature to act as another user. I thought it would be a good exercise for me to create my own image.
