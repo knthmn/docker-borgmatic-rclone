@@ -31,7 +31,7 @@ services:
 
 Volumes:
 * `/mnt/source`: used to mount files that need to be backed up
-* `/mnt/repo`: borg repository, rclone always uploads this folder
+* `/mnt/repo`: borg repository, rclone always uploads this folder. Remember to have `location/repositories` in the borgmatic config point here.
 * `/mnt/rclone_config`: directory for rclone config
 * `/mnt/borgmatic`: directory for borgmatic yaml files
 * `/mnt/borg_cache`: directory for borg cache
@@ -50,8 +50,6 @@ The image also has the following features
 * Arguments for the check task can be changed by `CHECK_OPTS`, default is empty.
 
 ## Notes
-I created this container because it suits my workflow for creating backups. I was originally using both `pfidr34/docker-rclone` and `b3vis/docker-borgmatic`. It bugged me that `b3vis/docker-borgmatic` didn't have the feature to act as another user. I thought it would be a good exercise for me to create my own image.
+I created this container because it suits my workflow for creating backups. I was originally using both `pfidr34/docker-rclone` and `b3vis/docker-borgmatic`. But I figured that it would be easier to have a single image.
 
-I used Python for the entry script because I am not comfortable with shell script and it was used by borgmatic anyway. The Alpine package install list was copied from the two images mentioned above.
-
-This is my first image so please be gentle if there is something wrong. The features I added to the image suit my personal use, but I am happy to add any features you want if it is not too complicated.
+The features I added to the image are for my personal use, but I am happy to add any features you want if it is not too complicated.
