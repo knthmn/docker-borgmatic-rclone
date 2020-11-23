@@ -22,6 +22,10 @@ RUN apk add \
     && chmod 755 /usr/bin/rclone
 
 FROM arm64v8/alpine:latest
+
+# Add QEMU
+COPY --from=qemu qemu-aarch64-static /usr/bin
+
 LABEL maintainer="knthmn@outlook.com"
 RUN apk add --no-cache \
     borgbackup \
