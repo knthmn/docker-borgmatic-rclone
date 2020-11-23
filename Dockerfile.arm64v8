@@ -1,0 +1,42 @@
+FROM alpine AS qemu
+
+# Download QEMU, see https://github.com/docker/hub-feedback/issues/1261
+ENV QEMU_URL https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/qemu-3.0.0+resin-arm.tar.gz
+RUN apk add curl && curl -L ${QEMU_URL} | tar zxvf - -C . --strip-components 1
+
+
+FROM arm32v7/alpine:3.12 as builder
+
+# Add QEMU
+COPY --from=qemu qemu-arm-static /usr/bin
+
+LABEL maintainer="knthmn@outlook.com"
+ARG RCLONE_VERSION=v1.52.3
+ARG BORGMATIC_VERSION=1.5.10
+RUN apk add \
+    py3-pip \
+    && pip3 install borgmatic==${BORGMATIC_VERSION} \
+    && cd /tmp \
+    && wget -q https://downloads.rclone.org/${RCLONE_VERSION}/rclone-${RCLONE_VERSION}-linux-arm-v7.zip \
+    && unzip -q rclone*.zip \
+    && cd rclone-*-linux-arm-v7 \
+    && cp rclone /usr/bin \
+    && chmod 755 /usr/bin/rclone
+
+FROM arm32v7/alpine:3.12
+LABEL maintainer="knthmn@outlook.com"
+RUN apk add --no-cache \
+    borgbackup \
+    tzdata
+COPY --from=builder /usr/lib/python3.8/site-packages /usr/lib/python3.8/
+COPY --from=builder \ 
+    /usr/bin/borgmatic \
+    /usr/bin/rclone \
+    /usr/bin/
+COPY entry.py script.py /
+
+ENV BORG_CACHE_DIR=/mnt/borg_cache
+ENV BORG_CONFIG_DIR=/mnt/borg_config
+VOLUME [ "/mnt/source", "/mnt/repo", "/mnt/rclone_config", "/mnt/borgmatic", "/mnt/borg_cache", "/mnt/borg_config" ]
+
+ENTRYPOINT ["/usr/bin/python3", "-u", "/entry.py"]
