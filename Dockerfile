@@ -1,7 +1,7 @@
 FROM alpine:3.12 AS builder
 LABEL maintainer="knthmn@outlook.com"
-ARG RCLONE_VERSION=v1.52.3
-ARG BORGMATIC_VERSION=1.5.10
+ARG RCLONE_VERSION=v1.53.3
+ARG BORGMATIC_VERSION=1.5.12
 RUN apk add \
     py3-pip \
     && pip3 install borgmatic==${BORGMATIC_VERSION} \
