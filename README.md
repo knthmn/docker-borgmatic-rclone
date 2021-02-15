@@ -20,7 +20,7 @@ services:
       - ./.config/rclone:/mnt/rclone_config:ro
       - ./.config/borgmatic:/mnt/borgmatic:ro
       - ./.cache/borg:/mnt/borg_cache
-      - ./.config/borg:/mnt/borg_config:ro
+      - ./.config/borg:/mnt/borg_config
     environment:
       - TZ=${TZ}
       - "DESTINATION=backup_cloud:"
@@ -30,12 +30,12 @@ services:
 
 
 Volumes:
-* `/mnt/source`: used to mount files that need to be backed up
+* `/mnt/source`: used to mount files that need to be backed up. Should be mounted read-only.
 * `/mnt/repo`: borg repository, rclone always uploads this folder. Remember to have `location/repositories` in the borgmatic config point here.
-* `/mnt/rclone_config`: directory for rclone config
-* `/mnt/borgmatic`: directory for borgmatic yaml files
-* `/mnt/borg_cache`: directory for borg cache
-* `/mnt/borg_config`: directory for borg config
+* `/mnt/rclone_config`: directory for rclone config. Read-only.
+* `/mnt/borgmatic`: directory for borgmatic yaml files. Read-only.
+* `/mnt/borg_cache`: directory for borg cache. Must be writable.
+* `/mnt/borg_config`: directory for borg config. Must be writable for rclone to save the latest state and keys of the repo.
 
 The container will run the following two cron tasks. Both tasks share a mutex lock so there is at most one task running.
 * create: schedule specified by `CRON_CREATE`, which runs `borgmatic` on the borgmatic configurations, and upload the repo to `DESTINATION` by using `rclone`.
