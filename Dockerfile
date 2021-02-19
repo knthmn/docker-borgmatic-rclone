@@ -23,7 +23,9 @@ COPY --from=builder \
     /usr/bin/rclone \
     /usr/bin/
 COPY entry.py script.py /
-RUN chmod 755 /entry.py /script.py 
+RUN chmod 755 /entry.py /script.py \
+    && ln -s /mnt/borgmatic /etc/borgmatic.d \
+    && ln -s /mnt/rclone_config/rclone.conf /usr/bin
 
 ENV BORG_CACHE_DIR=/mnt/borg_cache
 ENV BORG_CONFIG_DIR=/mnt/borg_config
