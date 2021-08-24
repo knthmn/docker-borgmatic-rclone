@@ -41,6 +41,9 @@ COPY --from=builder \
     /usr/bin/borg \
     /usr/bin/borgfs \
     /usr/bin/borgmatic \
+    /usr/bin/generate-borgmatic-config  \
+    /usr/bin/upgrade-borgmatic-config  \
+    /usr/bin/validate-borgmatic-config \
     /usr/bin/rclone \
     /usr/bin/ 
 COPY entry.py script.py /
