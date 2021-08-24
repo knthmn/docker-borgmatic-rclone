@@ -1,27 +1,48 @@
-FROM alpine:3.12 AS builder
+FROM alpine:3.14 AS builder
 LABEL maintainer="knthmn@outlook.com"
 ARG RCLONE_VERSION=v1.53.3
-ARG BORGMATIC_VERSION=1.5.12
+ARG BORG_VERSION=1.1.17
+ARG BORGMATIC_VERSION=1.5.18
 RUN apk add \
-    py3-pip \
-    && pip3 install borgmatic==${BORGMATIC_VERSION} \
+        py3-pip \
+        python3-dev \
+        openssl-dev\
+        acl-dev \
+        linux-headers \
+        fuse-dev \
+        attr-dev \
+        gcc \
+        alpine-sdk \
+        py3-wheel \
+    && pip3 install \
+        borgbackup==${BORG_VERSION} \
+        borgmatic==${BORGMATIC_VERSION} \
     && cd /tmp \
-    && wget -q https://downloads.rclone.org/${RCLONE_VERSION}/rclone-${RCLONE_VERSION}-linux-amd64.zip \
-    && unzip -q rclone*.zip \
-    && cd rclone-*-linux-amd64 \
-    && cp rclone /usr/bin \
-    && chmod 755 /usr/bin/rclone
+        && wget -q https://downloads.rclone.org/${RCLONE_VERSION}/rclone-${RCLONE_VERSION}-linux-amd64.zip \
+        && unzip -q rclone*.zip \
+        && cd rclone-*-linux-amd64 \
+        && cp rclone /usr/bin \
+        && chmod 755 /usr/bin/rclone
 
-FROM alpine:3.12
+FROM alpine:3.14
 LABEL maintainer="knthmn@outlook.com"
 RUN apk add --no-cache \
-    borgbackup \
-    tzdata
-COPY --from=builder /usr/lib/python3.8/site-packages /usr/lib/python3.8/
+        tzdata \
+        python3 \
+        openssl \
+        libcrypto1.1 \
+        libacl \
+        musl \
+        lz4-libs \
+        zstd-libs \
+        ca-certificates
+COPY --from=builder /usr/lib/python3.9/site-packages /usr/lib/python3.9/
 COPY --from=builder \ 
+    /usr/bin/borg \
+    /usr/bin/borgfs \
     /usr/bin/borgmatic \
     /usr/bin/rclone \
-    /usr/bin/
+    /usr/bin/ 
 COPY entry.py script.py /
 RUN chmod 755 /entry.py /script.py \
     && ln -s /mnt/borgmatic /etc/borgmatic.d \
