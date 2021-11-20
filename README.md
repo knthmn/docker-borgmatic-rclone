@@ -1,3 +1,5 @@
+** I switched to using [restic](https://restic.readthedocs.io/) so this repository is archived **
+
 # borgmatic with rclone container
 ![build size](https://img.shields.io/docker/image-size/knthmn/borgmatic-rclone)
 ![license](https://img.shields.io/github/license/knthmn/docker-borgmatic-rclone)
